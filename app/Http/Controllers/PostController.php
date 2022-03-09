@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PostRequest;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Auth;
+use Illuminate\Support\Facades\Auth;
 use Cviebrock\EloquentSluggable\Sluggable;
 
 class PostController extends Controller
@@ -44,19 +45,8 @@ class PostController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(PostRequest $request)
     {
-        $request->validate(
-            [
-                "title" => "required|min:5|unique:posts", // title is in posts table
-                "description" => "required|min:10"
-            ],
-            ["title.required" => "No empty titles"],
-            ["title.unique" => "Unique titles are only allowed"],
-            ["title.min" => "Title should be at least 3 char"],
-            ["description" => "no empty inputs"],
-            ["description.min" => "descrption at least 10 char"]
-        );
 
 
         // $request["user_id"] = Auth::user()->id;
@@ -107,28 +97,17 @@ class PostController extends Controller
     public function update(Request $request, Post $post)
     {
 
-        $request->validate(
-            [
-                "title" => "required|min:5|unique:posts", // title is in posts table
-                "description" => "required|min:10"
-            ],
-            ["title.required" => "No empty titles"],
-            ["title.unique" => "Unique titles are only allowed"],
-            ["title.min" => "Title should be at least 3 char"],
-            ["description" => "no empty inputs"],
-            ["description.min" => "descrption at least 10 char"]
-        );
 
-        Post::create([
-            "title" => $request->all()["title"],
-            "description" => $request->all()["description"],
-            "user_id" => $request->all()["user_id"]
-        ]);
+        // Post::create([
+        //     "title" => $request->all()["title"],
+        //     "description" => $request->all()["description"],
+        //     // "user_id" => $request->all()["user_id"]
+        // ]);
 
-        $user = Auth::user;
+        $user = Auth::user();
         if ($post->user->id == $user->id) {
             $post->update($request->all());
-            return to_route("post.show", $post);
+            return to_route("posts.show", $post);
         }
 
         return abort(403);

@@ -22,7 +22,6 @@ return new class extends Migration
             $table->string("title", 100);
             $table->text("description")->nullable();
             $table->string("info")->default("blog_post");
-            $table->string('slug')->unique();
             $table->timestamps();
         });
     }

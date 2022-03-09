@@ -21,8 +21,8 @@ class Post extends Model
     public function sluggable(): array
     {
         return [
-            'source' => [
-                'post' => 'title'
+            'slug' => [
+                'posts' => 'title'
             ]
         ];
     }
