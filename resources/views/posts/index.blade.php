@@ -22,6 +22,7 @@
             <th> Title </th>
             <th> Description </th>
             <th> Info </th>
+            <th> Slug </th>
             <th> View </th>
             <th> Edit </th>
             <th> Delete </th>
@@ -33,6 +34,7 @@
                 <td>{{$post->title}}</td>
                 <td>{{$post->description}}</td>
                 <td>{{$post->info}}</td>
+                <td>{{$post->title}}</td>
 
                 <td><a href="{{route("posts.show",$post["id"])}}" class="btn btn-info m-1">View </a></td>
                 <td><a href="{{route("posts.edit",$post["id"])}}" class="btn btn-warning m-1">Edit </a></td>

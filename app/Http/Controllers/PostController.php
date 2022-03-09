@@ -5,9 +5,17 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Auth;
+use Cviebrock\EloquentSluggable\Sluggable;
 
 class PostController extends Controller
 {
+
+    function __construct()
+    {
+        $this->middleware("auth")->only("index", "store", "update", "destory");
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -50,11 +58,18 @@ class PostController extends Controller
             ["description.min" => "descrption at least 10 char"]
         );
 
-        Post::create([
-            "title" => $request->all()["title"],
-            "description" => $request->all()["description"],
-            "user_id" => $request->all()["user_id"]
-        ]);
+
+        // $request["user_id"] = Auth::user()->id;
+        Post::create($request->all());
+
+
+        // $post->slug = \Str::slug($request->title);
+
+        // Post::create([
+        //     "title" => $request->all()["title"],
+        //     "description" => $request->all()["description"],
+        //     "user_id" => $request->all()["user_id"]
+        // ]);
 
         return to_route("posts.index");
     }
@@ -110,8 +125,13 @@ class PostController extends Controller
             "user_id" => $request->all()["user_id"]
         ]);
 
-        $post->update($request->all());
-        return to_route("post.show", $post);
+        $user = Auth::user;
+        if ($post->user->id == $user->id) {
+            $post->update($request->all());
+            return to_route("post.show", $post);
+        }
+
+        return abort(403);
     }
 
     /**
