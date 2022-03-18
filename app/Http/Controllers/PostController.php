@@ -9,6 +9,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Cviebrock\EloquentSluggable\Sluggable;
 
+use App\Jobs\PruneOldPostsJob;
+
+PruneOldPostsJob::dispatch();
+
 class PostController extends Controller
 {
 
