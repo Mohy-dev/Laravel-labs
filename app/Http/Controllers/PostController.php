@@ -9,6 +9,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
+
+use App\Rules\Minposts;
+
 use App\Jobs\PruneOldPostsJob;
 
 PruneOldPostsJob::dispatch();
@@ -18,7 +21,7 @@ class PostController extends Controller
 
     function __construct()
     {
-        $this->middleware("auth")->only("index", "store", "update", "destory");
+        $this->middleware("auth")->only("index", "`sto`re", "update", "destory");
     }
 
     /**
@@ -28,7 +31,6 @@ class PostController extends Controller
      */
     public function index()
     {
-        $user = Auth::user();
         $posts = Post::orderByDesc('id')->paginate(7);
         return view("posts.index", ["posts" => $posts]);
     }
@@ -55,8 +57,12 @@ class PostController extends Controller
 
 
         // $request["user_id"] = Auth::user()->id;
-        Post::create($request->all());
 
+        $user = Auth::user();
+        $request->validate([
+            $user => [new Minposts]
+        ]);
+        Post::create($request->all());
 
         // $post->slug = \Str::slug($request->title);
 
