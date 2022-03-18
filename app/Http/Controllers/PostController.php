@@ -7,7 +7,7 @@ use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Cviebrock\EloquentSluggable\Sluggable;
+use Illuminate\Support\Facades\Gate;
 
 use App\Jobs\PruneOldPostsJob;
 
@@ -28,6 +28,7 @@ class PostController extends Controller
      */
     public function index()
     {
+        $user = Auth::user();
         $posts = Post::orderByDesc('id')->paginate(7);
         return view("posts.index", ["posts" => $posts]);
     }
@@ -108,13 +109,20 @@ class PostController extends Controller
         //     // "user_id" => $request->all()["user_id"]
         // ]);
 
-        $user = Auth::user();
-        if ($post->user->id == $user->id) {
-            $post->update($request->all());
-            return to_route("posts.show", $post);
-        }
+        // $user = Auth::user();
+        // if ($post->user->id == $user->id) {
+        //     $post->update($request->all());
+        //     return to_route("posts.show", $post);
+        // }
 
-        return abort(403);
+
+        // if (!Gate::allows('update-post', $post)) {
+        //     abort(403);
+        // }
+
+        $this->authorize("update", $post);
+        $post->update($request->all());
+        return to_route("posts.show", $post);
     }
 
     /**
@@ -125,6 +133,8 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
+
+        $this->authorize("delete", $post);
         $post->delete();
         return to_route("posts.index");
     }

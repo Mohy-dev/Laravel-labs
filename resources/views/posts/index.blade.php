@@ -37,7 +37,10 @@
                 <td>{{$post->title}}</td>
 
                 <td><a href="{{route("posts.show",$post["id"])}}" class="btn btn-info m-1">View </a></td>
+                @can("update", $post)
                 <td><a href="{{route("posts.edit",$post["id"])}}" class="btn btn-warning m-1">Edit </a></td>
+                @endcan
+                @can("delete", $post)
                 <td>
                     {{-- turn around to excute the delete query by overiding in form --}}
                     <form action="{{route("posts.destroy",$post["id"])}}" method="POST" onclick="return myFunction();">
@@ -46,6 +49,7 @@
                         <input type="submit" value="delete" class="btn btn-danger m-1">
                     </form>
                 </td>
+                @endcan
             </tr>
         @endforeach
 
